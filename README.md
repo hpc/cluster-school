@@ -1,1 +1,2 @@
-# cluster-school
+
+This repository contains artifacts and curriculum for the LANL/ISTI [Supercomputer Institute](https://www.lanl.gov/projects/national-security-education-center/information-science-technology/summer-schools/cscnsi/index.php).
