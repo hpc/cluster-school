@@ -1,0 +1,38 @@
+#!/bin/sh
+
+echo "Entered system init"
+
+echo -n "Setting hostname... "
+/bin/hostname -F /etc/hostname >> /var/log/init 2>&1
+if [ $? -ne 0 ]; then
+	echo FAILED.
+else
+	echo OK.
+fi
+
+echo -n "Generating ssh host keys... "
+(
+/usr/bin/ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
+/usr/bin/ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
+/usr/bin/ssh-keygen -f /etc/ssh/ssh_host_rsa1_key -N '' -t rsa1
+/usr/bin/ssh-keygen -f /etc/ssh/ssh_host_ecdsa_key -N '' -t ecdsa
+/usr/bin/ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -N '' -t ed25519
+) >> /var/log/init 2>&1
+if [ $? -ne 0 ]; then
+	echo FAILED.
+else
+	echo OK.
+fi
+
+echo -n "Starting sshd... "
+/usr/sbin/sshd -u0 >> /var/log/init 2>&1
+if [ $? -ne 0 ]; then
+	echo FAILED.
+else
+	echo OK.
+fi
+
+echo -n "Starting agetty... "
+/sbin/agetty --noclear ttyS0 115200 linux &
+/sbin/agetty --noclear tty1 linux &
+wait

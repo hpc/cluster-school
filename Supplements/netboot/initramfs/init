@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# mount our basic filesystems
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+
+# load modules
+for m in $(cat modules.txt); do
+	insmod lib/modules/${m}.ko.xz
+done
+
+# bring up network
+ip link set up eth0
+udhcpc -s /net.sh -i eth0
+
+# load the system image into ramfs
+sh load_img.sh
+
+# shift mounts to the new image
+mount --move /sys /mnt/root/sys
+mount --move /dev /mnt/root/dev
+mount --move /proc /mnt/root/proc
+
+# switch to the full image
+cd /mnt/root
+exec switch_root /mnt/root /init
+
+# fallback to a shell (shouldn't ever happen)
+sh shell.sh

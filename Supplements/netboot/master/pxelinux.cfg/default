@@ -1,0 +1,10 @@
+DEFAULT menu.c32
+PROMPT 0
+TIMEOUT 50
+SERIAL 0 115200 0
+MENU TITLE Main Menu
+
+LABEL node
+	MENU LABEL Boot x86_64 Compute Node (diskless)
+	KERNEL vmlinuz
+	APPEND initrd=initramfs.img img=http://172.16.0.254/image.cpio console=tty0 console=ttyS0,115200
